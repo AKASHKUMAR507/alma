@@ -1,0 +1,45 @@
+{
+    "countries": [
+      {
+        "name": "India",
+        "code": "+91",
+        "flag": "🇮🇳"
+      },
+      {
+        "name": "Azerbaijan",
+        "flag": "🇦🇿",
+        "code": "+994"
+      },
+      {
+        "name": "Argentina",
+        "flag": "🇦🇷",
+        "code": "+54"
+      },
+      {
+        "name": "Australia",
+        "flag": "🇦🇺",
+        "code": "+61"
+      },
+      {
+        "name": "Austria",
+        "flag": "🇦🇹",
+        "code": "+43"
+      },
+      {
+        "name": "Afghanistan",
+        "flag": "🇦🇫",
+        "code": "+93"
+      },
+
+      {
+        "name": "Armenia",
+        "flag": "🇦🇲",
+        "code": "+374"
+      },
+      {
+        "name": "Aruba",
+        "flag": "🇦🇼",
+        "code": "+297"
+      } 
+    ]
+}  

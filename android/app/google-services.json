@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "460737658292",
+    "project_id": "almazx-e6d8b",
+    "storage_bucket": "almazx-e6d8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460737658292:android:24b17db9d28b5d80e5c6e1",
+        "android_client_info": {
+          "package_name": "com.almazx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "460737658292-f3p72bko1iai4mde6im0gk13561mg20j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.almazx",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "460737658292-fvblqqm01fj93ifirajtm33pt9g5lvln.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAymFdcARtAv3W7rWWbO778tL4fSlafnCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "460737658292-fvblqqm01fj93ifirajtm33pt9g5lvln.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,11 @@
+Name: Akash Kumar
+Today_Task                     status
+1. Forgot Screen Validation  = 
+2. OTP Screen(Forgot)        =
+3. Validation of OTP Screen  =
+
+
+Name: Akash Kumar
+Today's Task 
+1. Making create account screen 
+2. Validation
