@@ -7,14 +7,14 @@ import {
   Image,
   TextInput,
   SafeAreaView,
-  FlatList,
 } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import Success from '../components/alerts/Success';
 import CreateAccount from './register/CreateAccount';
 import ForgotPassword from '../screen/ForgotPassword';
 import CountryDropdown from '../components/CountryDropdown';
-import {IMAGES} from '../assets/color/thems';
+import {COLORS, IMAGES, SHADOWS} from '../assets/color/thems';
+import PhoneInput from 'react-native-phone-number-input';
 
 const COUNTRY_CODE = '+91';
 
@@ -44,8 +44,10 @@ const countries = [
   {id: '23', name: 'Benin', flag: '🇧🇯', code: '+229'},
   {id: '24', name: 'Bermuda', flag: '🇧🇲', code: '+1-441'},
 ];
- 
+
 const LoginScreen = ({navigation}) => {
+
+
   // ############################### Input Field ######################
   const [loginMethod, setLoginMethod] = useState('email');
   const [email, setEmail] = useState('');
@@ -73,17 +75,33 @@ const LoginScreen = ({navigation}) => {
 
   const handleEmailValidation = text => {
     setEmail(text);
-    setEmailErr('');
-     
+    if (!text) {
+      setEmailErr('*Email is required');
+    } else if (!validateEmail(text)) {
+      setEmailErr('*Please enter valid email.');
+    } else {
+      setEmailErr('');
+    }
   };
   const handlePhoneValidation = text => {
     setPhone(text);
-    setPhoneErr('');
+    if (!text) {
+      setPhoneErr('*Phone number is required');
+    } else if (!validatePhone(text)) {
+      setPhoneErr('*Please enter valid phone number.');
+    } else {
+      setPhoneErr('');
+    }
   };
   const handlePasswordValidation = text => {
     setPassword(text);
-    setPasswordErr('');
-     
+    if (!text) {
+      setPasswordErr('*Password is required');
+    } else if (!passwordRegex(text)) {
+      setPasswordErr('*Password must be strong.');
+    } else {
+      setPasswordErr('');
+    }
   };
 
   // ############################### Other ######################
@@ -100,6 +118,7 @@ const LoginScreen = ({navigation}) => {
     setIsEmail(true);
     setBoolean(true);
     handleButtonActive();
+    clearFieldData();
     setLoginMethod('email');
   };
 
@@ -107,11 +126,18 @@ const LoginScreen = ({navigation}) => {
     setIsEmail(false);
     setBoolean(false);
     handleButtonActive();
+    clearFieldData();
     setLoginMethod('phone');
   };
 
   const handleButtonActive = () => {
     setButtonActive(!buttonActive);
+  };
+
+  const clearFieldData = () => {
+    setEmail('');
+    setPhone('');
+    setPassword('');
   };
 
   // ############################### OTP handle ######################
@@ -123,60 +149,42 @@ const LoginScreen = ({navigation}) => {
   // ############################### Validation handle ######################
 
   const handleLogin = () => {
-
- 
-  
     // perform validation
     if (loginMethod === 'email') {
       if (!email) {
-        // alert('Email is required');
         setEmailErr('*Email is required');
-        return;
-      }
-      if (!validateEmail(email)) {
-        // alert('Invalid email');
-        setEmailErr('*Please enter valid email.');
-        return;
-      } else {
-        setEmailErr('');
       }
       if (!password) {
-        setPasswordErr('Password is required');
-        return;
-      } else if (!passwordRegex(password)) {
-        setPasswordErr('Password must be strong.');
-        return;
+        setPasswordErr('*Password is required');
       } else {
-        setPasswordErr('');
+        setShowSuccess(true);
+        clearFieldData();
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigation.navigate('EmailVarification', {data});
+        }, 2000);
       }
- 
     } else {
       if (!phone) {
         setPhoneErr('*Phone number is required');
-        return;
-      }
-      if (!validatePhone(phone)) {
-        setPhoneErr('*Please enter valid phone number.');
-        return;
-      } else {
-        setPhoneErr('');
       }
       if (!password) {
-        setPasswordErr('Password is required');
-        return;
-      } else if (!passwordRegex(password)) {
-        setPasswordErr('Password must be strong.');
-        return;
+        setPasswordErr('*Password is required');
       } else {
-        setPasswordErr('');
+        setShowSuccess(true);
+        clearFieldData();
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigation.navigate('EmailVarification', {data});
+        }, 2000);
       }
     }
 
-    setShowSuccess(true);
-    setTimeout(() => {
-      setShowSuccess(false);
-      navigation.navigate('EmailVarification', {data});
-    }, 2000);
+    // setShowSuccess(true);
+    // setTimeout(() => {
+    //   setShowSuccess(false);
+    //   navigation.navigate('EmailVarification', {data});
+    // }, 2000);
   };
 
   const validateEmail = email => {
@@ -203,13 +211,13 @@ const LoginScreen = ({navigation}) => {
           marginLeft: 32,
           flex: 1,
           marginRight: 27,
-          rowGap: 30,
+          rowGap: 25,
         }}>
         <Text
           style={{
             color: '#092147',
             fontSize: 32,
-            marginTop: '18%',
+            marginTop: '16%',
             fontWeight: 500,
           }}>
           Account Login
@@ -244,7 +252,6 @@ const LoginScreen = ({navigation}) => {
                 styles.btn2,
                 !isEmail && styles.activeSwitchButton,
               ]}
-               
               onPress={handlePhoneClick}>
               <View style={[styles.phone]}>
                 <Text
@@ -281,6 +288,8 @@ const LoginScreen = ({navigation}) => {
                   },
                   shadowRadius: 20,
                   elevation: 5,
+                  borderWidth: 1,
+                  borderColor: emailErr ? COLORS.error : COLORS.pureWhite,
                 }}>
                 <Image
                   source={require('../images/email.png')}
@@ -297,8 +306,7 @@ const LoginScreen = ({navigation}) => {
                   }}
                 />
                 <TextInput
-                  withShadow
-                  style={styles.emailInput}
+                  style={[styles.emailInput]}
                   placeholder="Enter your email"
                   placeholderTextColor="#6C757D"
                   value={email}
@@ -315,84 +323,19 @@ const LoginScreen = ({navigation}) => {
           <>
             <View style={styles.item1}>
               <Text style={styles.e}>Phone number</Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  backgroundColor: '#fff',
-                  borderColor: '#000',
-                  borderRadius: 10,
-                  height: 60,
-                  shadowColor: '#000000',
-                  shadowOffset: {
-                    width: 1,
-                    height: -5,
-                  },
-                  shadowRadius: 20,
-                  elevation: 5,
-              
-                }}>
-                <View style={{width: '30%',}}>
-                  <TouchableOpacity
-                    onPress={toggleCountries}
-                    style={styles.list}>
-                    <Text style = {{color:'#000000'}}>
-                      {selectedCountry.flag}
-                      {`  `}
-                      {selectedCountry.code}
-                    </Text>
-                    <Image
-                      source={IMAGES.drop}
-                      style={{
-                        height: 10,
-                        width: 10,
-                      }}
-                    />
-                  </TouchableOpacity>
-                  {/* {showCountries && (
-                    <FlatList
-                      style={[styles.flatListItem]}
-                      data={countries}
-                      renderItem={({item}) => (
-                        <TouchableOpacity
-                          onPress={() => selectCountry(item)}
-                          style={{padding: 10}}>
-                          <Text style={{backgroundColor: '#FFFFFF',color:'#000000'}}>
-                            {item.flag}
-                            {'    '}
-                            {item.name}
-                            {'    '}
-                            {item.code}
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                      keyExtractor={item => item.id}
-                    />
-                  )} */}
-                </View>
-
-                <Image
-                  source={require('../images/Line62.png')}
-                  style={{
-                    resizeMode: 'stretch',
-                    marginLeft: 0,
-                  }}
-                />
-
-                <TextInput
-                  value={phone}
-                  onChangeText={handlePhoneValidation}
-                  keyboardType="numeric"
-                  maxLength={10}
-                  placeholder="Enter your number"
-                  placeholderTextColor="#6C757D"
-                  style={{
-                    paddingLeft: 10,
-                    color: '#000',
-                  }}
-                />
-              </View>
+              <PhoneInput
+                value={phone}
+                onChangeText={handlePhoneValidation}
+                placeholder="Enter your number"
+                containerStyle={[
+                  styles.phoneContainer,
+                  {borderColor: phoneErr ? COLORS.error : COLORS.pureWhite},
+                ]}
+                textContainerStyle={styles.textContainer}
+                autoFocus
+                codeTextStyle={[styles.codeText]}
+                textInputStyle={styles.textInput}
+              />
               {phoneErr ? (
                 <Text style={styles.textError}>{phoneErr}</Text>
               ) : null}
@@ -421,7 +364,11 @@ const LoginScreen = ({navigation}) => {
               }}
             />
           </TouchableOpacity>
-          <View style={styles.SectionStyle}>
+          <View
+            style={[
+              styles.SectionStyle,
+              {borderColor: passwordErr ? COLORS.error : COLORS.pureWhite},
+            ]}>
             <Image
               source={require('../images/GroupLock.png')} //Change your icon image here
               style={{
@@ -516,6 +463,7 @@ const LoginScreen = ({navigation}) => {
           <View
             style={{
               alignItems: 'center',
+              marginBottom: 10,
             }}>
             {showSuccess && <Success />}
           </View>
@@ -531,7 +479,7 @@ const styles = StyleSheet.create({
   // button style
 
   textError: {
-    color: 'red',
+    color: COLORS.error,
   },
 
   safeArea: {
@@ -617,6 +565,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 20,
     elevation: 5,
+    borderWidth: 1,
   },
   item2: {
     display: 'flex',
@@ -636,13 +585,11 @@ const styles = StyleSheet.create({
   item1: {
     display: 'flex',
     rowGap: 6,
-    
   },
   e: {
     fontSize: 18,
     marginLeft: 5,
     color: '#343A40',
-    
   },
   emailInput: {
     borderRadius: 10,
@@ -653,7 +600,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     backgroundColor: '#fff',
     color: '#000',
-    
   },
 
   checkboxContainer: {
@@ -727,13 +673,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     columnGap: 10,
   },
-  flatListItem: {                                                                                   
+  flatListItem: {
     backgroundColor: '#FFFFFF',
     borderRadius: 5,
     height: '60%',
     borderWidth: 1,
     zIndex: 3,
     position: 'absolute',
+  },
+  phoneContainer: {
+    height: 60,
+    width: '100%',
+    ...SHADOWS.medium,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  textContainer: {
+    borderRadius: 10,
+    backgroundColor: COLORS.pureWhite,
+    paddingVertical: 0,
+  },
+  codeText: {
+    color: COLORS.black,
+  },
+  textInput: {
+    color: COLORS.black,
   },
 });
 

@@ -131,10 +131,7 @@ const OtpValidationForgot = ({navigation, route}) => {
         borderColor: '#fff',
       };
 
- useEffect(() => {
-  console.warn(OTP)
- }, [])
- 
+
 
   return (
     <ScrollView

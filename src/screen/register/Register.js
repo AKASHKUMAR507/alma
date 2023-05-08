@@ -14,8 +14,9 @@ import {
 import Btn from '../../components/buttons/Btn';
 import {COLORS, FONTWEIGHT, SIZES} from '../../assets/color';
 import Back from '../../components/buttons/Back';
-import {ICONS, IMAGES} from '../../assets/color/thems';
+import {ICONS, IMAGES, SHADOWS} from '../../assets/color/thems';
 import CheckBox from 'react-native-check-box';
+import PhoneInput from 'react-native-phone-number-input';
 
 const countries = [
   {id: '1', name: 'India', code: '+91', flag: '🇮🇳'},
@@ -46,28 +47,240 @@ const countries = [
 const {height, width} = Dimensions.get('screen');
 
 const Register = ({navigation}) => {
+
+  const [strong, setStrong] = useState(false);
+  const [length, setLength] = useState(false);
+  const [digit, setDigit] = useState(true);
+  const [latter, setLatter] = useState(false);
+  const [specialCharacter, setSpecialCharacter] = useState(false);
+
   const [loginMethod, setLoginMethod] = useState('email'); // default to email login
   const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [emailUpdates, setEmailUpdates] = useState(false);
-  const [shareData, setShareData] = useState(false);
   const [userName, setUserName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [phone, setPhone] = useState('');
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [isChecked, setIsCkecked] = useState(false);
+  const [emailUpdates, setEmailUpdates] = useState(false);
+  const [shareData, setShareData] = useState(false);
+ 
   // ***************************Error Set ********************************
 
   const [emailError, setEmailError] = useState('');
-  const [userNameError, setUserNameError] = useState();
-  const [passwordError, setPasswordError] = useState();
-  const [confirmPasswordError, setConfirmPasswordError] = useState();
-  const [phoneError, setPhoneError] = useState();
+  const [userNameError, setUserNameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [boolean, setBoolean] = useState(true);
 
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [showCountries, setShowCountries] = useState(false);
+
+  const toggleCountries = () => {
+    setShowCountries(!showCountries);
+  };
+
+  const selectCountry = country => {
+    setSelectedCountry(country);
+    setShowCountries(false);
+  };
+
+  const data = {
+    email: boolean,
+  };
+
+  const validateEmail = email => {
+    // simple email validation using regular expression
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const validatePhone = phone => {
+    // simple phone validation using regular expression
+    const regex = /^\d{10}$/;
+    return regex.test(phone);
+  };
+
+  const passwordRegex = password => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    return regex.test(password);
+  };
+
+  const handleNext = () => {
+    if (loginMethod === 'email') {
+      if (!emailOrPhone) {
+        setEmailError('Enter your email address.');
+      }
+
+      if (!userName) {
+        setUserNameError('Username required');
+      }
+
+      if (!password) {
+        setPasswordError('Password is required');
+      }
+
+      if (!confirmPassword) {
+        setConfirmPasswordError('Password is required');
+      } else {
+        navigation.navigate('RegisterScreenOTP', {data});
+        clearFieldData();
+      }
+    } else {
+      if (!phone) {
+        setPhoneError('Phone number is require');
+      }
+
+      if (!userName) {
+        setUserNameError('Username required');
+      }
+      if (!password) {
+        setPasswordError('Password is required');
+      }
+
+      if (!confirmPassword) {
+        setConfirmPasswordError('Password is required');
+      } else {
+        navigation.navigate('RegisterScreenOTP', {data});
+        clearFieldData();
+      }
+    }
+  };
+
+  const handleLoginMethodChange = method => {
+    setLoginMethod(method);
+    clearFieldData();
+    setBoolean(false);
+  };
+
+  const handleEmailOrPhoneChange = text => {
+    setEmailOrPhone(text);
+    if (!text) {
+      setEmailError('Enter your email address.');
+    } else if (!validateEmail(text)) {
+      setEmailError('Enter valid email');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handlePhone = text => {
+    setPhone(text);
+    if (!text) {
+      setPhoneError('Phone number is require.');
+    } else if (!validatePhone(text)) {
+      setPhoneError('Enter valid phone number');
+    } else {
+      setPhoneError('');
+    }
+  };
+
+  const handleUserName = text => {
+    setUserName(text);
+    if (!text) {
+      setUserNameError('Username required');
+    } else {
+      setUserNameError('');
+    }
+  };
+
+  const handlePasswordChange = text => {
+    
+    setPassword(text);
+    if (!text) {
+      setPasswordError('Password is required');
+    } else if (!passwordRegex(text)) {
+      setPasswordError(
+        <View style={styles.errorList}>
+          <View style={{flexDirection: 'row', columnGap: 10}}>
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                borderRadius: 10,
+                backgroundColor: shareData ? COLORS.green : COLORS.gray2,
+              }}></View>
+            <Text style={styles.error}>Password Strenth : STRONG</Text>
+          </View>
+          <View style={{flexDirection: 'row', columnGap: 10}}>
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                borderRadius: 10,
+                backgroundColor: shareData ? COLORS.green : COLORS.gray2,
+              }}></View>
+            <Text style={styles.error}>
+              Password should contains at least 8 Characters & max 16.
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', columnGap: 10}}>
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                borderRadius: 10,
+                backgroundColor: shareData ? COLORS.green : COLORS.gray2,
+              }}></View>
+            <Text style={styles.error}>
+              Password should contains at least 1 number.
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', columnGap: 10}}>
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                borderRadius: 10,
+                backgroundColor: shareData ? COLORS.green : COLORS.gray2,
+              }}></View>
+            <Text style={styles.error}>
+              Password should contains at least one lowercase & one uppercase
+              letter.
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              columnGap: 10,
+            }}>
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                borderRadius: 10,
+                backgroundColor: shareData ? COLORS.green : COLORS.gray2,
+              }}></View>
+            <Text style={styles.error}>
+              Password should contains at least one special character.
+            </Text>
+          </View>
+        </View>,
+      );
+    } else {
+      setPasswordError('');
+    }
+  };
+  const handleConfirmPassword = text => {
+    setConfirmPassword(text);
+    if (!text) {
+      setConfirmPasswordError('Password is required');
+    } else if (text != password) {
+      setConfirmPasswordError('Password does not match.');
+    } else {
+      setConfirmPasswordError('');
+    }
+  };
+ 
+  const clearFieldData = () => {
+    setEmailOrPhone('');
+    setPhone('');
+    setUserName('');
+    setPassword('');
+    setConfirmPassword('');
+  };
 
   const borderColorEmail = emailError
     ? {
@@ -104,287 +317,6 @@ const Register = ({navigation}) => {
     : {
         borderColor: COLORS.pureWhite,
       };
-
-  const toggleCountries = () => {
-    setShowCountries(!showCountries);
-  };
-
-  const selectCountry = country => {
-    setSelectedCountry(country);
-    setShowCountries(false);
-  };
-
-  const data = {
-    email: boolean,
-  };
-
-  const validateEmail = email => {
-    // simple email validation using regular expression
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
-  const validatePhone = phone => {
-    // simple phone validation using regular expression
-    const regex = /^\d{10}$/;
-    return regex.test(phone);
-  };
-
-  const passwordRegex = password => {
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
-    return regex.test(password);
-  };
-
-  const userNameCheckUnique = userName => {
-    const name = 'akash';
-    return name.test(userName);
-  };
-
-  const handleNext = () => {
-    // perform validation
-    if (loginMethod === 'email') {
-      if (!emailOrPhone) {
-        setEmailError('Enter your email address.');
-        return;
-      }
-      if (!validateEmail(emailOrPhone)) {
-        setEmailError('Enter valid email');
-        return;
-      }
-
-      if (!userName) {
-        setUserNameError('Username required');
-        return;
-      }
-      // if (!userNameCheckUnique(userName)) {
-      //   setUserNameError('Someone already has that username. Try again!');
-      //   return;
-      // }
-
-      if (!password) {
-        setPasswordError('Password is required');
-        return;
-      }
-      if (!passwordRegex(password)) {
-        setPasswordError(
-          <View style={styles.errorList}>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>Password Strenth : STRONG</Text>
-            </View>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least 8 Characters & max 16.
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least 1 number.
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least one lowercase & one uppercase
-                letter.
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                columnGap: 10,
-              }}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least one special character.
-              </Text>
-            </View>
-          </View>,
-        );
-        return;
-      }
-      if (!confirmPassword) {
-        setConfirmPasswordError('Password is required');
-        return;
-      }
-      if (confirmPassword != password) {
-        setConfirmPasswordError('Password does not match.');
-        return;
-      }
-    } else {
-      if (!phone) {
-        setPhoneError('Phone number is require');
-        return;
-      }
-      if (!validatePhone(phone)) {
-        setPhoneError('Enter valid number');
-        return;
-      }
-      if (!userName) {
-        setUserNameError('Username required');
-        return;
-      }
-      if (!password) {
-        setPasswordError('Password is required');
-        return;
-      }
-      if (!passwordRegex(password)) {
-        setPasswordError(
-          <View style={styles.errorList}>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>Password Strenth : STRONG</Text>
-            </View>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least 8 Characters & max 16.
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least 1 number.
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row', columnGap: 10}}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least one lowercase & one uppercase
-                letter.
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                columnGap: 10,
-              }}>
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  borderRadius: 10,
-                  backgroundColor: shareData ? COLORS.green : COLORS.gray2,
-                }}></View>
-              <Text style={styles.error}>
-                Password should contains at least one special character.
-              </Text>
-            </View>
-          </View>,
-        );
-        return;
-      }
-      if (!confirmPassword) {
-        setConfirmPasswordError('Password is required');
-        return;
-      }
-      if (password != confirmPassword) {
-        setConfirmPasswordError('Password does not match.');
-        return;
-      }
-    }
-
-    navigation.navigate('RegisterScreenOTP', {data});
-  };
-
-  const handleLoginMethodChange = method => {
-    setLoginMethod(method);
-    setEmailOrPhone('');
-    setPassword('');
-    setEmailError('');
-    setBoolean(false);
-  };
-
-  const handleUserName = text => {
-    setUserName(text);
-    setUserNameError('');
-  };
-
-  const handleEmailOrPhoneChange = text => {
-    setEmailOrPhone(text);
-    setEmailError('');
-  };
-
-  const handlePasswordChange = value => {
-    setPassword(value);
-    setPasswordError('');
-  };
-  const handleConfirmPassword = text => {
-    setConfirmPassword(text);
-    setConfirmPasswordError('');
-  };
-
-  const handleEmailUpdates = () => {
-    setEmailUpdates(true);
-    setShareData(false);
-  };
-
-  const handleShareData = () => {
-    setShareData(true);
-    setEmailUpdates(false);
-  };
-
-  const handlePhone = text => {
-    setPhone(text);
-    setPhoneError('');
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -500,67 +432,15 @@ const Register = ({navigation}) => {
               <>
                 <View style={styles.textInputItems}>
                   <Text style={styles.lable}>Mobile Number</Text>
-                  <View
-                    style={{
-                      justifyContent: 'center',
-                      width: width * 0.2,
-                      position: 'absolute',
-                      marginTop: 50,
-                      zIndex: 1,
-                      marginLeft: 10,
-                    }}>
-                    <TouchableOpacity
-                      onPress={toggleCountries}
-                      style={styles.icon}>
-                      <Text style={{color: '#000'}}>
-                        {selectedCountry.flag}
-                        {`  `}
-                        {selectedCountry.code}
-                      </Text>
-                      <Image
-                        source={IMAGES.drop}
-                        style={{height: 15, width: 15}}
-                      />
-                    </TouchableOpacity>
 
-                    {/* {showCountries && (
-                      <FlatList
-                        style={[styles.flatListItem]}
-                        data={countries}
-                        renderItem={({item}) => (
-                          <TouchableOpacity
-                            onPress={() => selectCountry(item)}
-                            style={{padding: 10}}>
-                            <Text style={{backgroundColor: '#FFFFFF'}}>
-                              {item.flag}
-                              {'    '}
-                              {item.name}
-                              {'    '}
-                              {item.code}
-                            </Text>
-                          </TouchableOpacity>
-                        )}
-                        keyExtractor={item => item.id}
-                      />
-                    )} */}
-                  </View>
-                  <Image
-                    source={IMAGES.line}
-                    style={{
-                      position: 'absolute',
-                      marginTop: 45,
-                      zIndex: 1,
-                      marginLeft: 90,
-                    }}
-                  />
-                  <TextInput
+                  <PhoneInput
                     placeholder="Phone number"
-                    style={[styles.inputBoxesPhone, borderColorPhone]}
-                    maxLength={10}
-                    placeholderTextColor={COLORS.secondary}
                     value={phone}
                     onChangeText={handlePhone}
-                    keyboardType="numeric"
+                    containerStyle={[styles.phoneContainer, borderColorPhone]}
+                    textContainerStyle={styles.textContainer}
+                    autoFocus
+                    codeTextStyle={[styles.codeText]}
                   />
                   {phoneError ? (
                     <Text style={styles.error}>{phoneError}</Text>
@@ -578,7 +458,7 @@ const Register = ({navigation}) => {
                 value={userName}
                 onChangeText={handleUserName}
                 placeholderTextColor={COLORS.secondary}
-                maxLength={15}
+                maxLength={20}
               />
               {userNameError ? (
                 <Text style={styles.error}>{userNameError}</Text>
@@ -686,7 +566,7 @@ const Register = ({navigation}) => {
 
           <View style={{rowGap: 15, marginTop: 21}}>
             <View style={{flexDirection: 'row', columnGap: 20}}>
-              <TouchableOpacity onPress={handleEmailUpdates}>
+              <TouchableOpacity onPress={() => setEmailUpdates(!emailUpdates)}>
                 <View
                   style={{
                     height: 20,
@@ -698,8 +578,8 @@ const Register = ({navigation}) => {
                   }}>
                   <Image
                     source={ICONS.whiteTick}
-                    tintColor={shareData ? COLORS.gray2 : COLORS.pure}
-                    style={{height:9,width:13}}
+                    tintColor={emailUpdates ? COLORS.pureWhite : COLORS.gray2}
+                    style={{height: 9, width: 13}}
                   />
                 </View>
               </TouchableOpacity>
@@ -708,7 +588,7 @@ const Register = ({navigation}) => {
               </Text>
             </View>
             <View style={{flexDirection: 'row', columnGap: 20}}>
-              <TouchableOpacity onPress={handleShareData}>
+              <TouchableOpacity onPressIn={() => setShareData(!shareData)}>
                 <View
                   style={{
                     height: 20,
@@ -721,7 +601,7 @@ const Register = ({navigation}) => {
                   <Image
                     source={ICONS.whiteTick}
                     tintColor={shareData ? COLORS.pureWhite : COLORS.gray2}
-                    style={{height:9,width:13}}
+                    style={{height: 9, width: 13}}
                   />
                 </View>
               </TouchableOpacity>
@@ -899,6 +779,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 500,
   },
+  phoneContainer: {
+    height: 60,
+    width: '100%',
+    ...SHADOWS.medium,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  textContainer: {
+    borderRadius: 10,
+    backgroundColor: COLORS.pureWhite,
+    paddingVertical: 0,
+  },
+  codeText: {},
 });
 
 export default Register;

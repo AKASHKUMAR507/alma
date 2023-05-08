@@ -28,65 +28,84 @@ const ResetPassword = ({navigation}) => {
   const [showHideAgain, setShowHideAgain] = useState(true);
   const [passwordError, setPasswordError] = useState('');
   const [passwordAgainError, setPasswordAgainError] = useState('');
-
-  const handlePassword = text => {
-    setPassword(text);
-    setPasswordError('');
-    
-  };
-  const handlePasswordAgain = text => {
-    setPasswordAgain(text);
-    setPasswordAgainError('');
  
+
+  const validatePassword = text => {
+    setPassword(text);
+
+    if (!text) {
+      setPasswordError('Please enter your password');
+    } else if (!passwordRegex(text)) {
+      setPasswordError(`Password must contain atleast,
+      * one lowercase
+      * one uppercase
+      * one numeric
+      * one special character
+      * minimum 8 characters
+      * maximum 16 chacracters `);
+    } else {
+      setPasswordError('');
+    }
   };
 
-  const borderColor = passwordError ? {
-    borderColor:COLORS.error
-  }:{
-    borderColor:COLORS.pureWhite
+  const ValidateConfirmPassword = text => {
+    setPasswordAgain(text);
+
+    if (!text) {
+      setPasswordAgainError('Please enter your password');
+    } else if (text != password) {
+      setPasswordAgainError('Passwords must be same');
+    } else {
+      setPasswordAgainError('');
+    }
+  };
+
+
+  const clearFieldData = () =>{
+    setPassword('')
+    setPasswordAgain('')
   }
-  const borderColor2 = passwordAgainError ? {
-    borderColor:COLORS.error
-  }:{
-    borderColor:COLORS.pureWhite
-  }
+
 
   const handleSubmit = () => {
-    if(submitMethod === 'pass'){
-      if (!password) {
-        setPasswordError('Please enter your password');
-        return;
-      }
-      if(!passwordRegex(password)){
-        setPasswordError(`Password must contain at least,
-        * one lowercase
-        * one uppercase
-        * one numeric
-        * one special character
-        * and password must be 8 characters or longer.`);
-        return;
-      }
-      if (!passwordAgain) {
-        setPasswordAgainError('Please enter your password');
-        return;
-      }
-      if(password != passwordAgain){
-        setPasswordAgainError('Passwords must be same');
-        return;
-      }
-      
+    if (!password) {
+      setPasswordError('Please enter your password');
     }
-
-    setSuccess(true);
+    if (!passwordAgain) {
+      setPasswordAgainError('Please enter your password');
+    } else {
+      setSuccess(true);
+      clearFieldData()
       setTimeout(() => {
         setSuccess(false);
       }, 3000);
+    }
   };
 
-  const passwordRegex = (password) =>{
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/
-    return regex.test(password)
-  }
+
+
+  const passwordRegex = password => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8})/;
+    return regex.test(password);
+  };
+
+
+  const borderColor = passwordError
+    ? {
+        borderColor: COLORS.error,
+      }
+    : {
+        borderColor: COLORS.pureWhite,
+      };
+  const borderColor2 = passwordAgainError
+    ? {
+        borderColor: COLORS.error,
+      }
+    : {
+        borderColor: COLORS.pureWhite,
+      };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -112,11 +131,13 @@ const ResetPassword = ({navigation}) => {
                   style={[styles.password, borderColor]}
                   placeholder="**************"
                   value={password}
-                  onChangeText={handlePassword}
+                  onChangeText={validatePassword}
                   secureTextEntry={showHide}
                   placeholderTextColor={COLORS.secondary}
                 />
-                {passwordError ? <Text style ={styles.error}>{passwordError}</Text> : null}
+                {passwordError ? (
+                  <Text style={styles.error}>{passwordError}</Text>
+                ) : null}
               </View>
 
               <View style={{rowGap: 5}}>
@@ -130,22 +151,22 @@ const ResetPassword = ({navigation}) => {
                   placeholder="**************"
                   style={[styles.password, borderColor2]}
                   value={passwordAgain}
-                  onChangeText={handlePasswordAgain}
+                  onChangeText={ValidateConfirmPassword}
                   secureTextEntry={showHideAgain}
                   placeholderTextColor={COLORS.secondary}
                 />
-                {passwordAgainError ? <Text style ={styles.error}>{passwordAgainError}</Text> : null}
+                {passwordAgainError ? (
+                  <Text style={styles.error}>{passwordAgainError}</Text>
+                ) : null}
               </View>
             </>
-          ) : (
-            null
-          )}
+          ) : null}
         </View>
         <View style={styles.btn}>
           <Btn title={'Submit'} BgColor={COLORS.blue} Press={handleSubmit} />
         </View>
         <View style={styles.createAccount}>
-          <Text style = {{color:COLORS.secondary}}>
+          <Text style={{color: COLORS.secondary}}>
             You haven't any account?
             <Text
               style={{color: COLORS.blue}}
@@ -155,7 +176,7 @@ const ResetPassword = ({navigation}) => {
             </Text>
           </Text>
         </View>
-        <View style={{marginTop: '10%'}}>
+        <View style={{marginTop: '8%'}}>
           {success && (
             <SuccessPopup
               sms={'Your password has been changed successfully'}
@@ -187,12 +208,11 @@ const styles = StyleSheet.create({
     fontWeight: FONTWEIGHT.medium,
   },
   title: {
-    color:COLORS.secondary
+    color: COLORS.secondary,
   },
   inputField: {
     rowGap: 40,
     marginTop: 30,
-    
   },
   password: {
     backgroundColor: COLORS.pureWhite,
@@ -206,8 +226,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 60,
     paddingLeft: 20,
-    borderWidth:1,
-    color:COLORS.black
+    borderWidth: 1,
+    color: COLORS.black,
   },
   hideIcon: {
     position: 'absolute',
@@ -232,8 +252,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  error:{
-    color:COLORS.error,
-    fontSize:SIZES.small
+  error: {
+    color: COLORS.error,
+    fontSize: SIZES.small,
   },
 });

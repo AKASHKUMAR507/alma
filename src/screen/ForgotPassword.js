@@ -12,28 +12,29 @@ import CountryDropdown from '../components/CountryDropdown';
 import LoginScreen from './LoginScreen';
 import CreateAccount from './register/CreateAccount';
 import axios from 'axios';
-import { BASE_URL } from '../auth/BaseUrl';
-import { COLORS } from '../assets/color';
+import {BASE_URL} from '../auth/BaseUrl';
+import {COLORS, SHADOWS} from '../assets/color';
+import PhoneInput from 'react-native-phone-number-input';
 
 const ForgotPassword = ({navigation}) => {
-  const [submitMethod, setSubmitMethod] = useState('email')
+  const [submitMethod, setSubmitMethod] = useState('email');
   const [isEmail, setIsEmail] = useState(true);
   const [boolean, setBoolean] = useState(true);
-  const [email, setEmail] = useState();
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
+  {
+    /* **************************************** Error State ***************************************** */
+  }
+  const [emailError, setEmailError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
 
- 
-{/* **************************************** Error State ***************************************** */}
-  const [emailError , setEmailError] = useState('')  
-  const [phoneError , setPhoneError] = useState('')  
-
-  const handleEmailChange = (text) => {
-    setEmail(text)
+  const handleEmailChange = text => {
+    setEmail(text);
     setEmailError('');
   };
-  const handlePhoneChange = (text) => {
-    setPhone(text)
+  const handlePhoneChange = text => {
+    setPhone(text);
     setPhoneError('');
   };
 
@@ -41,51 +42,48 @@ const ForgotPassword = ({navigation}) => {
     email: boolean,
   };
 
-
   const handleEmailClick = () => {
     setIsEmail(true);
     setBoolean(true);
-    setSubmitMethod('email')
+    setSubmitMethod('email');
+    clearFieldData();
   };
 
   const handlePhoneClick = () => {
     setIsEmail(false);
     setBoolean(false);
-    setSubmitMethod('phone')
+    setSubmitMethod('phone');
+    clearFieldData();
+  };
+
+  const clearFieldData = () => {
+    setEmail('');
+    setPhone('');
   };
 
   const handleSubmit = () => {
-
-    if(submitMethod === 'email'){
+    if (submitMethod === 'email') {
       if (!email) {
         setEmailError('*Email is required');
-        
         return;
       }
       if (!validateEmail(email)) {
-         setEmailError('*Please enter valid email id')
+        setEmailError('*Please enter valid email id');
         return;
       }
-      if(email){
-        sendEmailOtp();
-        console.log('email')
+    } else {
+      if (!phone) {
+        setPhoneError('Phone number is required');
+        return;
       }
-    }else{
-      if(!phone){
-        setPhoneError('Phone number is required')
-        return
-      }
-      if(!validatePhone(phone)){
-        setPhoneError("*Please enter valid phone number")
-        return
-      }
-      if(phone){
-         sendPhoneOtp();
+      if (!validatePhone(phone)) {
+        setPhoneError('*Please enter valid phone number');
+        return;
       }
     }
 
-    navigation.navigate('OtpValidationForgot',{data});
-    
+    navigation.navigate('OtpValidationForgot', {data});
+    clearFieldData();
   };
   const validateEmail = email => {
     // simple email validation using regular expression
@@ -99,53 +97,52 @@ const ForgotPassword = ({navigation}) => {
     return regex.test(phone);
   };
 
-// ***************************API **************************
-  const sendEmailOtp = () =>{
+  // ***************************API **************************
+  const sendEmailOtp = () => {
     axios({
-      method:'POST',
+      method: 'POST',
       url: `${BASE_URL}/user/userSignupSendEmailOTP`,
-      data:{
+      data: {
         email: 'akash.kumar@indicchain.com',
+      },
+    })
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+  };
+  const sendPhoneOtp = () => {
+    return axios({
+      method: 'POST',
+      url: `${BASE_URL}/user/userSignupSendMobileOTP`,
+      data: {
+        countryCode: '+91',
+        mobileNumber: phone,
+      },
+    })
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+  };
+
+  const borderColor = emailError
+    ? {
+        borderColor: COLORS.error,
       }
-    }).then(res => console.log(res)).catch(err => console.log(err))
-  } 
-  const sendPhoneOtp = () =>{
-    return (
-      axios({
-        method:'POST',
-        url: `${BASE_URL}/user/userSignupSendMobileOTP`,
-        data:{
-          countryCode: "+91",
-          mobileNumber: phone,
-        }
-      }).then(res => console.log(res)).catch(err => console.log(err))
-    )
-  } 
+    : {
+        borderColor: COLORS.pureWhite,
+      };
 
-
-
-  const borderColor = emailError ? {
-    borderColor:COLORS.error
-  }:
-  {
-    borderColor:COLORS.pureWhite,
-  }
-
-  const borderColorPhone = phoneError ? {
-    borderColor:COLORS.error
-  }:
-  {
-    borderColor:COLORS.pureWhite,
-  }
-
-
+  const borderColorPhone = phoneError
+    ? {
+        borderColor: COLORS.error,
+      }
+    : {
+        borderColor: COLORS.pureWhite,
+      };
 
   return (
     <View style={styles.container}>
       <View style={styles.main}>
         {/* **************************************** Heading Text ***************************************** */}
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          
           <Text style={styles.headingText}>Forgot Password</Text>
           {/* **************************************** Heading Button ***************************************** */}
           <TouchableOpacity onPress={() => navigation.navigate(LoginScreen)}>
@@ -213,45 +210,35 @@ const ForgotPassword = ({navigation}) => {
                 <Image source={require('../images/Line62.png')} />
               </View>
               <TextInput
-                style={[styles.input, styles.email , borderColor]}
+                style={[styles.input, styles.email, borderColor]}
                 placeholder="Enter your email"
                 placeholderTextColor={'#6C757D'}
                 value={email}
                 onChangeText={handleEmailChange}
               />
-              {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
+              {emailError ? (
+                <Text style={styles.errorMessage}>{emailError}</Text>
+              ) : null}
             </>
           ) : (
-            <>
+            <>ß
               <Text style={styles.lableText}>*Phone Number</Text>
-              <View
-                style={{
-                  position: 'absolute',
-                  flexDirection: 'row',
-                  zIndex: 1,
-                  columnGap: 15,
-                  marginHorizontal: 15,
-                  marginVertical: 45,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <View style={{marginLeft: -14, marginVertical: -13}}>
-                  <CountryDropdown />
-                </View>
-                <View style={{marginHorizontal: -15}}>
-                  <Image source={require('../images/Line62.png')} style={{}} />
-                </View>
-              </View>
-              <TextInput
-                style={[styles.input, styles.phone , borderColorPhone]}
+              <PhoneInput
                 placeholder="Enter your number"
                 placeholderTextColor={'#6C757D'}
                 maxLength={10}
                 keyboardType="numeric"
                 value={phone}
                 onChangeText={handlePhoneChange}
+                autoFocus
+                containerStyle={[styles.phoneContainer, borderColorPhone]}
+                textContainerStyle={styles.textContainer}
+                codeTextStyle={[styles.codeText]}
               />
-               {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
+
+              {phoneError ? (
+                <Text style={styles.errorMessage}>{phoneError}</Text>
+              ) : null}
             </>
           )}
 
@@ -269,7 +256,9 @@ const ForgotPassword = ({navigation}) => {
               alignItems: 'center',
               flexDirection: 'row',
             }}>
-            <Text style = {{color:COLORS.ternary}}>You haven't any account? </Text>
+            <Text style={{color: COLORS.ternary}}>
+              You haven't any account?{' '}
+            </Text>
             <Text
               style={styles.create}
               onPress={() => navigation.navigate(CreateAccount)}>
@@ -376,7 +365,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 5,
     paddingLeft: 60,
-    borderWidth:1,
+    borderWidth: 1,
   },
   errorText: {
     color: 'red',
@@ -452,6 +441,19 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 10,
   },
+  phoneContainer: {
+    height: 60,
+    width: '100%',
+    ...SHADOWS.medium,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  textContainer: {
+    borderRadius: 10,
+    backgroundColor: COLORS.pureWhite,
+    paddingVertical: 0,
+  },
+  codeText: {},
 });
 
 export default ForgotPassword;

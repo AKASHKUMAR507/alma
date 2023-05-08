@@ -11,13 +11,12 @@ import {COLORS, FONTWEIGHT, SIZES} from '../../assets/color';
 import Btn from '../../components/buttons/Btn';
 import Back from '../../components/buttons/Back';
 
-
 const AlmaxzAccount = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.items}>
         <View style={styles.backButton}>
-          <Back Press={() => navigation.navigate('CreateAccount')}/>
+          <Back Press={() => navigation.navigate('CreateAccount')} />
         </View>
         <View>
           <Text style={styles.headingText}>Create your Almaxz account</Text>
@@ -63,8 +62,16 @@ const AlmaxzAccount = ({navigation}) => {
         <View>
           <Text numberOfLines={5} style={styles.policy}>
             By creating an account you agree to our{' '}
-            <Text style={styles.termsAndCondition} onPress={() => navigation.navigate('TermsCondition')}>Terms and Condition, </Text>
-            <Text style={styles.termsAndCondition} onPress={() => navigation.navigate('PrivacyPolicy')}>Privacy Policy </Text>
+            <Text
+              style={styles.termsAndCondition}
+              onPress={() => navigation.navigate('TermsCondition')}>
+              Terms and Condition,{' '}
+            </Text>
+            <Text
+              style={styles.termsAndCondition}
+              onPress={() => navigation.navigate('PrivacyPolicy')}>
+              Privacy Policy{' '}
+            </Text>
             <Text style={styles.policy}>and</Text>
             <Text style={styles.termsAndCondition}>
               {' '}
@@ -73,16 +80,39 @@ const AlmaxzAccount = ({navigation}) => {
           </Text>
         </View>
         <View>
-          <Btn title={'Create Personal Account'} BgColor={COLORS.blue} Press={()=>navigation.navigate('Register')}/>
+          <TouchableOpacity
+            style={{
+              backgroundColor: COLORS.blue,
+              height: 60,
+              borderRadius: 10,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => navigation.navigate('Register')}>
+            <Text
+              style={{
+                color: COLORS.pureWhite,
+                fontSize: SIZES.xLarge,
+                fontWeight: FONTWEIGHT.medium,
+              }}>
+              Create Personal Account
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-      <View >
-        <Text style = {[styles.policy,styles.already]}>
+      <View style = {{
+        marginTop:20,
+      }}>
+        <Text style={[styles.policy, styles.already]}>
           Already registered?
-          <Text style = {styles.termsAndCondition} onPress={() =>navigation.navigate('LoginScreen')} > Log in</Text>
+          <Text
+            style={styles.termsAndCondition}
+            onPress={() => navigation.navigate('LoginScreen')}>
+            {' '}
+            Log in
+          </Text>
         </Text>
       </View>
-       
     </SafeAreaView>
   );
 };
@@ -171,11 +201,11 @@ const styles = StyleSheet.create({
     color: COLORS.blue,
     fontSize: SIZES.medium,
   },
-  policy:{
-    color:COLORS.secondary,
-    fontSize:SIZES.medium
+  policy: {
+    color: COLORS.secondary,
+    fontSize: SIZES.medium,
   },
-  already:{
-    textAlign:'center'
+  already: {
+    textAlign: 'center',
   },
 });

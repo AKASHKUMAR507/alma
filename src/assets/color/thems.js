@@ -11,6 +11,7 @@ const COLORS = {
   error: '#DC3545',
   green:'#28A745',
   black:'#000000',
+  red:'#DC3545',
 };
 
 const FONT = {
@@ -88,7 +89,14 @@ const ICONS = {
   notification : require('../../images/icons/notification.png'),
   menu : require('../../images/icons/menu.png'),
   voice : require('../../images/icons/voice.png'),
-  whiteTick : require('../../images/icons/whitetick.png')
+  whiteTick : require('../../images/icons/whitetick.png'),
+  crossTicks : require('../../images/icons/crossTick.png'),
+  bnb : require('../../images/icons/BNB.png'),
+  bts : require('../../images/icons/BTS.png'),
+  ftm : require('../../images/icons/FTM.png'),
+  mir : require('../../images/icons/MIR.png'),
+  pnt : require('../../images/icons/PNT.png'),
+  dollar : require('../../images/icons/dollar.png'),
 
 }
 

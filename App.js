@@ -21,6 +21,7 @@ import Register from './src/screen/register/Register';
 import RegisterScreenOTP from './src/screen/register/RegisterScreenOTP';
 import SuccessScreen from './src/screen/register/SuccessScreen';
 import Routes from './src/routes/Routes';
+import MarketRoutes from './src/routes/Market/MarketRoutes';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -51,6 +52,7 @@ const App = () => {
         <Stack.Screen name="RegisterScreenOTP" component={RegisterScreenOTP} />
         <Stack.Screen name="SuccessScreen" component={SuccessScreen} />
         <Stack.Screen name="Routes" component={Routes} />
+        <Stack.Screen name="MarketRoutes" component={MarketRoutes} />
       </Stack.Navigator>
     </NavigationContainer>
   );

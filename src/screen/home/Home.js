@@ -21,10 +21,10 @@ import {NotificationServices, requestUserPermission} from '../../utils/PushNotif
 const {height, width} = Dimensions.get('screen');
 
 const Home = () => {
-  useEffect(() =>{
-    requestUserPermission()
-    NotificationServices()
-  },[])
+  // useEffect(() =>{
+  //   requestUserPermission()
+  //   NotificationServices()
+  // },[])
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.main}>
@@ -306,6 +306,8 @@ const Home = () => {
           flexDirection:'row',
           justifyContent:'space-between',
           alignItems:'center',
+          width: '100%',
+          borderWidth:1
         }}>
           <View
             style={{
@@ -330,6 +332,7 @@ const Home = () => {
 
         {/* ************************************************* Announcement ****************************** */}
       </View>
+       
     </SafeAreaView>
   );
 };
@@ -344,7 +347,9 @@ const styles = StyleSheet.create({
   },
   main: {
     flex: 1,
+     
   },
+  
   item1: {
     flexDirection: 'row',
     alignItems: 'center',
